@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 from flask import Flask, jsonify
 import datetime as dt
+import numpy as np
 
 # access sqlite dbase and reflect it
 engine = create_engine("sqlite:///hawaii.sqlite")
@@ -44,4 +45,11 @@ def precipitation():
    precip = {date: prcp for date, prcp in precipitation}
    return jsonify(precip)
 
+# build route for station analysis
+@app.route("/api/v1.0/stations")
 
+def stations():
+    results = session.query(Station.station).all()
+    # unravel results into a one-dimensional array
+    stations = list(np.ravel(results))
+    return jsonify(stations=stations)
